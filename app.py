@@ -83,53 +83,45 @@ Pick the road you think is **safer**. Let's see how you do!
 """)
 st.divider()
 
-uploaded_file = st.file_uploader("Upload your `train.csv` file to start the challenge", type=["csv"])
+if st.session_state.road_data is None:
+    st.session_state.road_data = load_road_data("/workspaces/Road-Accident-Risk-Prediction/train.csv")
 
-if not uploaded_file:
-    st.info("Waiting for you to upload a CSV file to begin.")
-    st.session_state.game_initialized = False 
-    initialize_game()
-else:
-    if st.session_state.road_data is None:
-        st.session_state.road_data = load_road_data(uploaded_file)
-    
-    if st.session_state.road_data is not None:
-        
-        st.header("Your Score")
-        score_col, total_col = st.columns(2)
-        score_col.metric("Correct Answers", st.session_state.score)
-        total_col.metric("Total Rounds Played", st.session_state.total_questions)
-        st.divider()
+if st.session_state.road_data is not None:
+    st.header("Your Score")
+    score_col, total_col = st.columns(2)
+    score_col.metric("Correct Answers", st.session_state.score)
+    total_col.metric("Total Rounds Played", st.session_state.total_questions)
+    st.divider()
 
-        if st.session_state.road_one_details is None:
-            select_new_pair()
+    if st.session_state.road_one_details is None:
+        select_new_pair()
 
-        road1, road2 = st.session_state.road_one_details, st.session_state.road_two_details
-        
-        left_col, right_col = st.columns(2)
-        if road1 is not None and road2 is not None:
-            display_road_card(left_col, road1, 1)
-            display_road_card(right_col, road2, 2)
-        
-        st.write("")
+    road1, road2 = st.session_state.road_one_details, st.session_state.road_two_details
 
-        if not st.session_state.answer_submitted:
-            b1, b2 = st.columns(2)
-            if b1.button("🚗 Road 1 is Safer", use_container_width=True, key="road1_button"):
-                check_answer(1)
-                st.rerun()
-            
-            if b2.button("🚙 Road 2 is Safer", use_container_width=True, key="road2_button"):
-                check_answer(2)
-                st.rerun()
+    left_col, right_col = st.columns(2)
+    if road1 is not None and road2 is not None:
+        display_road_card(left_col, road1, 1)
+        display_road_card(right_col, road2, 2)
+
+    st.write("")
+
+    if not st.session_state.answer_submitted:
+        b1, b2 = st.columns(2)
+        if b1.button("🚗 Road 1 is Safer", use_container_width=True, key="road1_button"):
+            check_answer(1)
+            st.rerun()
+
+        if b2.button("🚙 Road 2 is Safer", use_container_width=True, key="road2_button"):
+            check_answer(2)
+            st.rerun()
+    else:
+        if "✅" in st.session_state.feedback_message:
+            st.success(st.session_state.feedback_message)
         else:
-            if "✅" in st.session_state.feedback_message:
-                st.success(st.session_state.feedback_message)
-            else:
-                st.error(st.session_state.feedback_message)
-            
-            sleep(0.4) 
-            
-            if st.button("➡️ Play Next Round", use_container_width=True, type="primary"):
-                select_new_pair()
-                st.rerun()
+            st.error(st.session_state.feedback_message)
+
+        sleep(0.4)
+
+        if st.button("➡️ Play Next Round", use_container_width=True, type="primary"):
+            select_new_pair()
+            st.rerun()
