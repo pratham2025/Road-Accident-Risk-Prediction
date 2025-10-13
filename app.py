@@ -84,7 +84,7 @@ Pick the road you think is **safer**. Let's see how you do!
 st.divider()
 
 if st.session_state.road_data is None:
-    st.session_state.road_data = load_road_data("/workspaces/Road-Accident-Risk-Prediction/train.csv")
+    st.session_state.road_data = load_road_data("/Road-Accident-Risk-Prediction/train.csv")
 
 if st.session_state.road_data is not None:
     st.header("Your Score")
